@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <meta name="description" contents="Slutty Ladies Observing Outgoing Trying Have Expressive Sex">
+
+    <title>installation (v1.0)</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootbox-dialoges.css">
+    <link rel="stylesheet" href="/css/jquery.Jcrop.css">
+    <link rel="stylesheet" href="/scene/joystick.css">
+
+    <script src="/socketcluster.js"></script>
+    <script src="/sc-codec-min-bin.js"></script>
+
+    <script>
+
+        debugMode = true;
+
+        console.log({
+            "debug": debugMode,
+            "scc-version": socketCluster.version,
+            "scc-clients": socketCluster.clients,
+        });
+
+    </script>
+
+</head>
+
+<body>
+
+<style>
+
+    body {
+        background-color: #b1c8e8;
+        margin: 0px;
+        overflow: hidden;
+    }
+
+    #scene-container {
+        height:100vh;
+    }
+
+    .middle > * {
+        margin:auto;
+        position:absolute;
+        top:0; bottom:0;
+        left:0; right:0;
+        height:fit-content;
+        width:fit-content;
+    }
+
+</style>
+
+<div id="scene-container"></div>
+<div class="joystick-controls" id="joystick-controls-1"></div>
+<div class="joystick-controls" id="joystick-controls-2"></div>
+
+<script src="/js/w3.js"></script>
+<script src="/js/rawinflate.js"></script>
+<script src="/js/rawdeflate.js"></script>
+<script src="/js/store2.js"></script>
+<script src="/js/Objectid.js"></script>
+<script src="/js/zangodb.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/jquery-ui.js"></script>
+<script src="/js/jquery.Jcrop.js"></script>
+<script src="/js/bootbox.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/DeviceDetector.js"></script>
+<script src="/js/MathDecimalAdjustment.js"></script>
+<script src="/js/watermark.js"></script>
+<script src="/js/validator.js"></script>
+<script src="/js/system.min.js"></script>
+<script src="/js/signals.min.js"></script>
+<script src="/js/command.js"></script>
+<script src="/AW3D_db/AW3D.db.js"></script>
+
+<script src="/three/three.js"></script>
+<script src="/three/EditorControls.js"></script>
+<script src="/three/Detector.js"></script>
+<script src="/three/Projector.js"></script>
+<script src="/three/Animation.js"></script>
+<script src="/three/AnimationHandler.js"></script>
+<script src="/three/KeyFrameAnimation.js"></script>
+<script src="/three/SubdivisionModifier.js"></script>
+<script src="/three/UVsDebug.js"></script>
+<script src="/three/shader.js"></script>
+
+<script src="/js/MW.js"></script>
+<script src="/js/MWtps.js"></script>
+<script src="/js/VirtualInput.js"></script>
+<script src="/js/scene-helpers.js"></script>
+<script src="/js/edges-helpers.js"></script>
+
+<script src="/scene/scene.js"></script>
+<script src="/scene/world.js"></script>
+
+<script src="/AW3D/AW3D-dev0.3.3.js"></script>
+<script src="/js/PlayerController.js"></script>
+<script src="/js/cameraControl.js"></script>
+<script src="/js/KeyInputControls.js"></script>
+<script src="/js/JoystickControls.js"></script>
+<script src="/js/jquery-update-engine.js"></script>
+<script src="/js/jquery-render-engine.js"></script>
+<script src="/js/runtime.js"></script>
+
+<script src="/js/animationsLoader.js"></script>
+
+<!-- 
+    <script src="/scene/materialtoJson.js">
+        //  Included in AW3D version 0.3.3 and later.  //
+    </script>
+
+    <script src="/scene/recoverfromJson.js">
+        //  DEPRECATED  //
+    </script>
+
+    <script src="/scene/action-helpers.js"></script>
+    <script src="/scene/snapshot-helpers.js"></script>
+    <script src="/scene/sceneHandler.js"></script>
+    <script src="/scene/localPlayerHandler.js"></script>
+    <script src="/scene/skinnedMeshLoader.js"></script>
+-->
+
+<script>
+
+
+//  Install.
+
+    async function install(){
+
+        await cache.match("/AW3D_db/v3.7/animations.json")
+        .then(function(response){return response.json();}).then(function(json){return json;})
+        .then(function(json){db.collection("animations").insert(json);});
+
+        await cache.match("/AW3D_db/v3.7/male.json")
+        .then(function(response){return response.json();}).then(function(json){return json;})
+        .then(function(json){db.collection("male").insert(json);});
+
+        await cache.match("/AW3D_db/v3.7/female.json")
+        .then(function(response){return response.json();}).then(function(json){return json;})
+        .then(function(json){db.collection("female").insert(json);});
+
+        await cache.match("/AW3D_db/v3.7/skeleton.json")
+        .then(function(response){return response.json();}).then(function(json){return json;})
+        .then(function(json){db.collection("skeleton").insert(json);});
+
+        await cache.match("/AW3D_db/v3.7/materials.json")
+        .then(function(response){return response.json();}).then(function(json){return json;})
+        .then(function(json){db.collection("materials").insert(json);});
+
+    }
+
+//  Load.
+
+    (async function(){
+
+        outfit = new AW3D.OutfitManager();
+
+        male = {gender:"male"};
+        await db.collection("male").findOne({_id:"body"}).then(function(json){male.body = json;});
+        await db.collection("male").findOne({_id:"eyes"}).then(function(json){male.eyes = json;});
+        await db.collection("male").findOne({_id:"hairs"}).then(function(json){male.hairs = json;});
+        await db.collection("male").findOne({_id:"underwears"}).then(function(json){male.underwears = json;});
+        debugMode && console.log({"male":male});
+
+        female = {gender:"female"};
+        await db.collection("female").findOne({_id:"body"}).then(function(json){female.body = json;});
+        await db.collection("female").findOne({_id:"eyes"}).then(function(json){female.eyes = json;});
+        await db.collection("female").findOne({_id:"hairs"}).then(function(json){female.hairs = json;});
+        await db.collection("female").findOne({_id:"underwears"}).then(function(json){female.underwears = json;});
+        debugMode && console.log({"female":female});
+
+        skeleton = {gender:null};
+        await db.collection("skeleton").findOne({_id:"body"}).then(function(json){skeleton.body = json;});
+        debugMode && console.log({"skeleton":skeleton});
+
+        outfit.fromJSON(female);
+        outfit.setGender("female");
+        scene.add(outfit.direction);
+
+    })();
+
+//  Export.
+
+    function exportCollection( name ){
+
+    //  throws error if collection not exist!
+        db.collection( name );  // important!
+
+        db.collection(name).find()
+        .toArray(function(err, docs){
+            if (err) throw err;
+            if ( !docs.length )  
+                throw `collection ${name} is empty`;
+        }).then(function(docs){ 
+            return JSON.stringify(docs);
+        }).then(function(data){ 
+            debugMode && console.log( data );
+
+        //  Save to desktop.
+            var a = document.createElement("a");
+            var file = new Blob([data], {type: "text/json"});
+            a.href = URL.createObjectURL(file);
+            a.download = name + ".json";
+            a.click();
+
+            return a.href; // OK.
+
+        }).then(function(objectURL){
+            URL.revokeObjectURL(objectURL); // OK.
+
+        }).catch(function(err){
+            console.error(err);
+        });
+
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+//  installation.js.
+
+(async function(){
+
+//  OUTFIT URLS.
+
+    var skinned = {};
+
+    skinned.male = [
+        "/skinned/male/body.json",
+        "/skinned/male/eyes.json",
+        "/skinned/male/hairs.json",
+        "/skinned/male/underwears.json",
+        "/skinned/male/costume.json",
+        "/skinned/male/trousers.json",
+        "/skinned/male/shoes.json",
+    ];
+
+    skinned.female = [
+        "/skinned/female/body.json",
+        "/skinned/female/eyes.json",
+        "/skinned/female/hairs.json",
+        "/skinned/female/stockings.json",
+        "/skinned/female/underwears.json",
+        "/skinned/female/dress.json",
+        "/skinned/female/costume.json",
+        "/skinned/female/trousers.json",
+        "/skinned/female/shoes.json",
+    ];
+
+    skinned.skeleton = [
+        "/skinned/skeleton/bones.json",
+        "/skinned/skeleton/skeleton.json",
+    ];
+
+//  ANIMATION URLS.
+
+    var animations = {};
+
+    animations.basic = [
+        "/animations/basic/idle.json",
+        "/animations/basic/walk.json",
+        "/animations/basic/run.json",
+        "/animations/basic/jump.json",
+    ];
+
+    animations.male = [
+        "/animations/male/idle.json",
+        "/animations/male/walk.json",
+        "/animations/male/run.json",
+        "/animations/male/jump.json",
+    ];
+
+    animations.female = [
+        "/animations/female/idle.json",
+        "/animations/female/walk.json",
+        "/animations/female/run.json",
+        "/animations/female/jump.json",
+    ];
+
+//  INSTALL MATERIALS TO INDEXED DB.
+
+    async function installMaterials(url){
+
+        var cache = await caches.open("materials")
+        .then(async function(cache){ return cache; });
+
+        await cache.add(url);
+
+        var docs = await cache.match(url)
+        .then(function(response){
+            return response.json();
+        }).then(function(json){
+            return json;
+        });
+
+        debugMode && console.log({"(material) docs":docs});
+
+        var collection = db.collection("materials");
+
+        for (var i=0; i < docs.length; i++){
+
+            var doc = docs[i];
+
+            var result = await collection.findOne({_id:doc._id}, function(err){
+                if (err) throw err;
+            }).then(async function(result){ 
+                return result; 
+            });
+
+            if (result) {
+
+                var selector = {_id:doc._id};
+                var modifier = {$set:doc};
+
+                await collection.update(selector, modifier, function(err){
+                    if (err) throw err;
+                }).catch(function(err){
+                    console.error(err);
+                });
+
+                debugMode && console.log("updated:", {[doc.name]:doc});
+
+            } else {
+
+                await collection.insert(doc, function(err){
+                    if (err) throw err;
+                }).catch(function(err){
+                    console.error(err);
+                });
+
+                debugMode && console.log("inserted:", {[doc.name]:doc});
+
+            }
+
+        }
+
+    }
+
+//  INSTALL ANIMATIONS TO INDEXED DB.
+
+    async function installAnimations(options){
+
+        var cache = await caches.open(options.name)
+        .then(async function(cache){
+            return cache;
+        });
+
+        await cache.addAll( options.URLS );
+
+        var doc = {_id:options._id}; // important!
+
+        for (var i=0; i < options.URLS.length; i++){
+
+            var json = await caches.match(options.URLS[i])
+            .then(function(response){
+                return response.json();
+            }).then(function(json){
+                return json;
+            });
+
+            doc[json.name] = json;
+
+        }
+
+        var modifier = {$set: doc};
+        var selector = {_id: doc._id};
+        var collection = db.collection(options.name);
+
+
+        var result = await collection.findOne(selector, function(err){
+            if (err) throw err;
+        }).then(async function(result){ 
+            return result; 
+        });
+
+        if (result) {
+
+        //  debugMode && console.log({"found":result._id});
+
+            await collection.update(selector, modifier, function(err){
+                if (err) throw err;
+            }).catch(function(err){
+                console.error(err);
+            });
+
+            debugMode && console.log("updated:", {[doc._id]:doc});
+
+        } else {
+
+            await collection.insert(doc, function(err){
+                if (err) throw err;
+            }).catch(function(err){
+                console.error(err);
+            });
+
+            debugMode && console.log("inserted:", {[doc._id]:doc});
+
+        }
+
+    }
+
+//  loadSkinnedMesh.js
+
+    async function loadSkinnedMesh(json){
+
+        var loader = new THREE.JSONLoader();
+        var geometry = loader.parse( json ).geometry;
+
+        geometry.sourceFile = json.sourceFile;  // important!
+
+        geometry.computeFaceNormals();
+        geometry.computeVertexNormals();
+        geometry.computeBoundingBox();
+        geometry.computeBoundingSphere();
+        geometry.name = json.name + ".geometry";
+
+        var material = new THREE.MeshStandardMaterial({skinning:true});
+
+        var skinned = new THREE.SkinnedMesh( geometry, material );
+
+        skinned.renderDepth = 1;
+        skinned.frustumCulled = false;
+        skinned.position.set( 0, 0, 0 );
+        skinned.rotation.set( 0, 0, 0 );
+        skinned.castShadow = true;
+        skinned.name = json.name;
+
+        return skinned;
+    }
+
+//  INSTALL OUTFITS TO INDEXED DB.
+
+    async function createOutfit(options){
+
+        var cache = await caches.open(options.name)
+        .then(async function(cache){ return cache; });
+
+        await cache.addAll( options.URLS );
+
+        var outfit = new AW3D.OutfitManager(); // important!
+        var collection = db.collection(options.name);
+
+        for (var i=0; i < options.URLS.length; i++){ 
+            await (async function(){
+                var url = options.URLS[i];
+                await cache.match(url).then(function(response){
+                    return response;
+                }).then(async function(response){
+                    return response.json();
+                }).then(async function(json){
+                    json.sourceFile = url; // very important!
+                    var key = json.name;
+                    outfit[key] = await loadSkinnedMesh(json);
+                    return outfit[key];
+                }).then(function(mesh){
+                    console.log(mesh);
+                });
+            })();
+        }
+
+        return outfit;
+
+    }
+
+
+//  Insert outfits in indexedDB.
+
+    async function insertOutfits( outfit ){
+
+        var slots = ["body", "eyes", "hairs", "stockings", "underwears", "dress", "costume", "tshirt", "trousers", "shoes"];
+
+        for (var i = 0; i < slots.length; i++){
+
+            (async function(){
+
+                var slot = slots[i];
+
+                if ( slot in outfit ) {
+
+                    var object = outfit.toJSON(slot);
+                    object[slot]._id = object[slot].name; // important! danger!
+
+                    var modifier = { $set: object[ slot ] };
+                    var selector = { _id:  object[ slot ]._id };
+                    var collection = db.collection(options.name);
+
+                    var result = await collection.findOne(selector, function(err){
+                        if (err) throw err;
+                    }).then(async function(result){ 
+                        return result; 
+                    });
+
+                    if (result) {
+
+                        await collection.update(selector, modifier, function(err){
+                            if (err) throw err;
+                        }).catch(function(err){
+                            console.error(err);
+                        });
+
+                        debugMode && console.log("updated:", object);
+
+                    } else {
+
+                        await collection.insert(object[slot], function(err){
+                            if (err) throw err;
+                        }).catch(function(err){
+                            console.error(err);
+                        });
+
+                        debugMode && console.log("inderted:", object);
+
+                    }
+
+                }
+
+            })();
+
+        }
+
+    }
+
+    /*
+        await installAnimations({
+            _id:"basic",
+            name:"animations",
+            URLS:animations.basic,
+        });
+
+        await installAnimations({
+            _id:"male",
+            name:"animations",
+            URLS:animations.male,
+        });
+
+        await installAnimations({
+            _id:"female",
+            name:"animations",
+            URLS:animations.female,
+        });
+
+        var cache = await caches.open("collections")
+        .then(async function(cache){
+            return cache;
+        });
+
+        await cache.addAll([
+            "/AW3D_db/v3.7/male.json",
+            "/AW3D_db/v3.7/female.json",
+            "/AW3D_db/v3.7/skeleton.json",
+        ]);
+    */
+
+
+</script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
