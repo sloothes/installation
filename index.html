@@ -127,6 +127,8 @@
 
         });
 
+        debugMode && console.log(`Dropping ${db.name}...`);
+
         await db.open().then(function(){
             debugMode && console.log(`Database ${db.name} (v${db.version}) opened.`);
         });
@@ -147,6 +149,8 @@
 
         });
 
+        debugMode && console.log(`Creating ${db.name}v${db.version}...`);
+
         await db.open(function(err, database){
             if (err) console.error(err);
         }).then( function(){
@@ -161,6 +165,7 @@
 //  Install collections.
 
     async function install(){
+        debugMode && console.log(`Installing ${db.name}...`);
 
         var cache = await caches.open("collections").then(function(cache){return cache;});
 
@@ -171,6 +176,8 @@
             "/AW3D_db/materials.json",
             "/AW3D_db/animations.json",
         ]);
+
+        debugMode && console.log(`Caching and loading data...`);
 
         await cache.match("/AW3D_db/animations.json")
         .then(function(response){return response.json();}).then(function(json){return json;})
@@ -197,6 +204,7 @@
 //  Load animations.
 
     async function animationsLoader(){
+        debugMode && console.log(`Caching and loading animations...`);
 
         Animations = {};
         await db.collection("animations").findOne({_id:"basic"}).then(function(json){
@@ -222,6 +230,7 @@
 //  Load outfit.
 
     async function outfitsLoader(){
+        debugMode && console.log(`Loading avatar...`);
 
         outfit = new AW3D.OutfitManager();
 
@@ -266,6 +275,11 @@
         scene.add(outfit.direction);
 
     }
+
+    $("#installation-button").on("click", function(){
+        //  installation();
+        $("#installation-modal").slideUp();
+    });
 
 </script>
 
